@@ -1,49 +1,47 @@
-import react, { Component } from 'react';
+import React, { useState } from 'react';
+import LoginForm from './components/LoginForm';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      items: [],
-      isLoaded: false,
-    }
+function App() {
+  const adminUser = {
+    email: "admin@admin.com",
+    password: "admin123"
   }
 
-  componentDidMount() {
-    //Actual API code
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
-      .then(json => {
-        this.setState({
-          isLoaded: true,
-          items: json,
-          //getting the data from API
-          //save data inside app component/ inside astates, so we can reuse it inside the component
-        })
-      });
-  }
+  const [user, setUser] = useState({ name: "", email: "" });
+  const [error, setError] = useState("");
 
-  //render method is responsible for producing the output of application
-  //after render menthod the componentDidMount method will run
-  render() {
-    var { isLoaded, items } = this.state;
-    if (!isLoaded) {
-      return <div>Loading.....</div>;
-    }
-    else {
-      return (
-        <div className="App">
-          <ul>
-            {items.map(item => (
-              <li key={item.id}>
-                {item.id} Name: {item.name} | Email: {item.email}
-              </li>
-            ))};
-          </ul>
-        </div>
-      );
-    }
-  }
+  const Login = details => {
+    console.log(details);
+
+    if (details.email == adminUser.email && details.password == adminUser.password){
+      console.log("Logged in");
+      setUser({
+        name: details.name,
+        email: details.email
+      })
+  } else {
+   // console.log("Details do not match!");
+   setError("Details do not match!");
+    
+}
+}
+
+const Logout = () => {
+  setUser({name: "", email: "" })
+}
+
+return (
+  <div className="App">
+    {(user.email !== "") ? (
+      <div className="welcome">
+        <h2>Welcome, <span>{user.name}</span></h2>
+        <button onClick={Logout}>LOGOUT</button>
+      </div>
+    ) : (
+      <LoginForm Login={Login} error={error} />
+    )}
+  </div>
+);
 }
 
 export default App;
